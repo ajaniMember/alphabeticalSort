@@ -23,45 +23,46 @@ void alphabeticalSort::sort()
         sortedStrings.push_back( unsortedStrings[0] );
         unsortedStrings.erase( unsortedStrings.begin() );
     }
-    else
+    
+    //using while instead of for so the now non-existant iterator doesn't get invalidated when I erase an element
+    int count = unsortedStrings.size();
+    while(count != 0)
     {
-        int count = unsortedStrings.size();
-        //using while instead of for so the now non-existant iterator doesn't get invalidated when I erase an element
-        while(count != 0)
-        {
-            us = unsortedStrings[0];
+        us = unsortedStrings[0];
+        int i = 1;
+        for(auto s = sortedStrings.begin(); s != sortedStrings.end(); s++, i++ )
+        {  
+            //if returns 1, 'us' is less than 's'
+            if(compare(us, *s) )
+            {
+                //add the unsorted string into the sortedStrings array before the sortedString that
+                //'us' was compared to
+                sortedStrings.insert(s--, us);
+                unsortedStrings.erase(unsortedStrings.begin());
 
-            for(auto s : sortedStrings)
-            {  
-                //if returns 1, 'us' is less than 's'
-                if( compare(us, *s) )
-                {
-                    //add the unsorted string into the sortedStrings array before the sortedString that
-                    //'us' was compared to
-                    sortedStrings.insert(s--, us);
-                    unsortedStrings.erase(unsortedStrings.begin());
-
-                    break;
-                }
-
+                break;
             }
-            //unsorted String is not less than any other value so we place it at the back
-            //then remove it from the unsortedStrings vector
-            sortedStrings.push_back(us);
-            unsortedStrings.erase(unsortedStrings.begin());
 
-            count--;
         }
-    }    
+        //unsorted String is not less than any other value so we place it at the back
+        //then remove it from the unsortedStrings vector
+        sortedStrings.push_back(us);
+        unsortedStrings.erase(unsortedStrings.begin());
+
+        count--;
+    }
+      
 }
 
-int alphabeticalSort::compare(std::string unsorted, std::string sorted)
+int alphabeticalSort::compare(std::string& unsorted, std::string& sorted)
 {
+    //unsorted length
     int usLength = unsorted.size();
+    //sorted length
     int sLength = sorted.size();
 
-    //use the larger string to loop over to avoid accessing an undefined element
-    if(usLength > sLength)
+    //use the smaller string to loop over to avoid accessing an undefined element
+    if(usLength < sLength)
     {
         
         for(int i = 0; i <= usLength; i++)
@@ -72,14 +73,13 @@ int alphabeticalSort::compare(std::string unsorted, std::string sorted)
             {
 
                 return 1;
-                break;
 
             }
-            //sorted is considered less than sorted
+            //sorted is considered greater than sorted
             else if( findNumericValue(unsorted[i]) > findNumericValue(sorted[i]) )
             {
+                
                 return 0;
-                break;
             }
 
         }
@@ -94,20 +94,18 @@ int alphabeticalSort::compare(std::string unsorted, std::string sorted)
             {
 
                 return 1;
-                break;
 
             }
             //sorted is considered less than sorted
             else if( findNumericValue(unsorted[i]) > findNumericValue(sorted[i]) )
             {
+    
                 return 0;
-               
-
             }
         }
     }
     
-
+    return -1;
 
 }
 

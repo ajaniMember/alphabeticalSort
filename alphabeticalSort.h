@@ -9,7 +9,6 @@ class alphabeticalSort{
     public:
         //this is the definition
         alphabeticalSort(std::vector<std::string>&, std::vector<std::string>&);
-
     private:
         //vector that determins the position that 
         //vector that determins the position that
@@ -19,10 +18,8 @@ class alphabeticalSort{
         std::vector<std::string>& sortedStrings;
 
         void sort();
-        int compare(std::string, std::string);
+        int compare(std::string&, std::string&);
         int findNumericValue(char);
-
-
 };
 
 #endif
