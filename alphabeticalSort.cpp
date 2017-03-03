@@ -7,7 +7,7 @@
 #include <vector>
 
 alphabeticalSort::alphabeticalSort(std::vector<std::string>& strings, std::vector<std::string>& sorted) 
-: unsortedStrings(strings), sortedStrings(sorted), chars({'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[' , ']', ';', '\'', ',', '.', '/', '{', '}', ':', '"', '<', '>', '?', '\\', '|'})
+: unsortedStrings(strings), sortedStrings(sorted), chars({'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[' , ']', ';', '\'', ',', '.', '/', '{', '}', ':', '"', '<', '>', '?', '\\', '|', ' '})
 {
     sort();
 }
@@ -16,6 +16,7 @@ void alphabeticalSort::sort()
 {
     //unsorted string
     std::string us;
+    bool found = 0;
 
     //if sortedStrings is empty pop unsortedStrings first value and put it in sortedStrings
     if(sortedStrings.size() == 0)
@@ -29,87 +30,65 @@ void alphabeticalSort::sort()
     while(count != 0)
     {
         us = unsortedStrings[0];
-        int i = 1;
-        for(auto s = sortedStrings.begin(); s != sortedStrings.end(); s++, i++ )
+        //std::cout << us << std::endl;
+        
+        for(auto s = sortedStrings.begin(); s != sortedStrings.end(); s++)
         {  
-            //if returns 1, 'us' is less than 's'
-            if(compare(us, *s) )
+
+            //returns 1, 'us' is less than 's
+            if(compare(us, *s))
             {
                 //add the unsorted string into the sortedStrings array before the sortedString that
                 //'us' was compared to
-                sortedStrings.insert(s--, us);
+                sortedStrings.insert(s, us);
                 unsortedStrings.erase(unsortedStrings.begin());
-
+                found = true;
                 break;
             }
-
+            
         }
-        //unsorted String is not less than any other value so we place it at the back
-        //then remove it from the unsortedStrings vector
-        sortedStrings.push_back(us);
-        unsortedStrings.erase(unsortedStrings.begin());
+        
+        if(!found)
+        {
+            found = false;
+            //unsorted String is not less than any other value so we place it at the back
+            //then remove it from the unsortedStrings vector
+            sortedStrings.push_back(us);
+            unsortedStrings.erase(unsortedStrings.begin());
+        }
 
         count--;
     }
       
 }
 
-int alphabeticalSort::compare(std::string& unsorted, std::string& sorted)
+//returns true is a is considered less than b
+int alphabeticalSort::compare(std::string& a, std::string& b)
 {
-    //unsorted length
-    int usLength = unsorted.size();
-    //sorted length
-    int sLength = sorted.size();
+    int aLength = a.size();
+    int bLength = b.size();
+    //max in for loop must be the size of the smaller string
+    int max = aLength > bLength ? bLength : aLength;
 
-    //use the smaller string to loop over to avoid accessing an undefined element
-    if(usLength < sLength)
-    {
-        
-        for(int i = 0; i <= usLength; i++)
+    for(int i = 0; i <= max; i++)
+    {   
+
+        if(numericValue(a[i]) < numericValue(b[i]))
         {
-
-            //unsorted is considered less than sorted
-            if( findNumericValue(unsorted[i]) < findNumericValue(sorted[i]) )
-            {
-
-                return 1;
-
-            }
-            //sorted is considered greater than sorted
-            else if( findNumericValue(unsorted[i]) > findNumericValue(sorted[i]) )
-            {
-                
-                return 0;
-            }
-
+            return 1;
         }
-
-    }
-    else
-    {
-        for(int i = 0; i <= sLength; i++)
+        else if(numericValue(a[i]) > numericValue(b[i]))
         {
-            //unsorted is considered less than sorted
-            if( findNumericValue(unsorted[i]) < findNumericValue(sorted[i]) )
-            {
-
-                return 1;
-
-            }
-            //sorted is considered less than sorted
-            else if( findNumericValue(unsorted[i]) > findNumericValue(sorted[i]) )
-            {
-    
-                return 0;
-            }
+            return 0;
         }
     }
-    
-    return -1;
 
+    //if one string either matches the other or it fits inside the other string
+    //return the string that has less characters
+    return aLength > bLength || aLength == bLength ? 0 : 1;
 }
 
-int alphabeticalSort::findNumericValue(char a)
+int alphabeticalSort::numericValue(char a)
 {
     int i = 1;
 
