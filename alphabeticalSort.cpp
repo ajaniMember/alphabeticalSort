@@ -5,79 +5,75 @@
 #include <iostream>
 #include <string>
 #include <vector>
+//for isupper()
+#include <ctype.h>
 
-alphabeticalSort::alphabeticalSort(std::vector<std::string>& strings, std::vector<std::string>& sorted) 
-: unsortedStrings(strings), sortedStrings(sorted), chars({'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[' , ']', ';', '\'', ',', '.', '/', '{', '}', ':', '"', '<', '>', '?', '\\', '|', ' '})
+alphabeticalSort::alphabeticalSort(std::list<std::string>& strings, std::list<std::string>& sorted) 
+: chars({ '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+', '[' , ']', ';', '\'', ',', '.', '/', '{', '}', ':', '"', '<', '>', '?', '\\', '|', ' ', 'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', 'g', 'G', 'h', 'H', 'i', 'I', 'j', 'J', 'k', 'K', 'l', 'L', 'm', 'M', 'n', 'N', 'o', 'O', 'p', 'P', 'q', 'Q', 'r', 'R', 's', 'S', 't', 'T', 'u', 'U', 'v', 'V', 'w', 'W', 'x', 'X', 'y', 'Y', 'z', 'Z'}),
+  unsortedStrings(strings),
+  sortedStrings(sorted)
 {
     sort();
 }
 
 void alphabeticalSort::sort()
 {
-    //unsorted string
-    std::string us;
     bool found = 0;
 
     //if sortedStrings is empty pop unsortedStrings first value and put it in sortedStrings
     if(sortedStrings.size() == 0)
     {
-        sortedStrings.push_back( unsortedStrings[0] );
+        sortedStrings.push_back( unsortedStrings.front() );
         unsortedStrings.erase( unsortedStrings.begin() );
     }
     
-    //using while instead of for so the now non-existant iterator doesn't get invalidated when I erase an element
-    int count = unsortedStrings.size();
-    while(count != 0)
-    {
-        us = unsortedStrings[0];
-        //std::cout << us << std::endl;
-        
-        for(auto s = sortedStrings.begin(); s != sortedStrings.end(); s++)
-        {  
+    for(int count = unsortedStrings.size(); count != 0; count--){
 
-            //returns 1, 'us' is less than 's
-            if(compare(us, *s))
+        for(auto s = sortedStrings.begin(); s != sortedStrings.end(); s++)
+        {
+            if(compare(unsortedStrings.front(), *s))
             {
-                //add the unsorted string into the sortedStrings array before the sortedString that
-                //'us' was compared to
-                sortedStrings.insert(s, us);
+                sortedStrings.insert(s, unsortedStrings.front());
                 unsortedStrings.erase(unsortedStrings.begin());
                 found = true;
                 break;
             }
-            
         }
         
+        //place value at the back of vector because nothing else to compare to
         if(!found)
         {
-            found = false;
-            //unsorted String is not less than any other value so we place it at the back
-            //then remove it from the unsortedStrings vector
-            sortedStrings.push_back(us);
+            sortedStrings.push_back(unsortedStrings.front());
             unsortedStrings.erase(unsortedStrings.begin());
         }
-
-        count--;
+        
+        found = false;
     }
       
 }
 
-//returns true is a is considered less than b
+//returns true if a is considered less than b
 int alphabeticalSort::compare(std::string& a, std::string& b)
 {
     int aLength = a.size();
     int bLength = b.size();
+
     //max in for loop must be the size of the smaller string
     int max = aLength > bLength ? bLength : aLength;
 
+    int aNum;
+    int bNum;
+
     for(int i = 0; i <= max; i++)
     {   
+        aNum = numericValue(a[i]);
+        bNum = numericValue(b[i]);
 
-        if(numericValue(a[i]) < numericValue(b[i]))
+        if(aNum < bNum)
         {
             return 1;
         }
-        else if(numericValue(a[i]) > numericValue(b[i]))
+        else if(aNum > bNum)
         {
             return 0;
         }
@@ -88,15 +84,25 @@ int alphabeticalSort::compare(std::string& a, std::string& b)
     return aLength > bLength || aLength == bLength ? 0 : 1;
 }
 
+//returns the position that the variable a equals in the chars vector
 int alphabeticalSort::numericValue(char a)
 {
-    int i = 1;
+    int i = 0;
 
     for(auto e = chars.begin(); e != chars.end(); e++, i++){
 
         if(a == *e)
-        {
-            return i;
+        {   
+            //if uppercase return i as the lowercase position
+            if(isupper(a)){
+
+                return i-1;
+            }
+            else
+            {
+               return i; 
+            }
+            
         }
     }
 
