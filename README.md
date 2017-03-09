@@ -16,7 +16,7 @@ Requirements that need to be complete before I would consider it complete
     # = started
     * = complete
 
-    [#] - clean and simplify code
+    [*] - clean and simplify code
 
 #Compilation
 clang++ -std=c++14 test.cpp alphabeticalSort.cpp
